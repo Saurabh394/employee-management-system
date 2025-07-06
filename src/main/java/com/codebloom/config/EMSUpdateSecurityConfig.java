@@ -17,16 +17,16 @@ public class EMSUpdateSecurityConfig {
 
     @Bean
     public InMemoryUserDetailsManager userDetails(PasswordEncoder passwordEncoder){
-        UserDetails user = User.withUsername("Akash").password(passwordEncoder()
-                .encode("BlackBolt@1993")).roles("USER").build();
+        UserDetails employee = User.withUsername("Akash").password(passwordEncoder()
+                .encode("BlackBolt@1993")).roles("EMPLOYEE").build();
 
-        UserDetails admin = User.withUsername("Amit").password(passwordEncoder()
-                .encode("BlackBolt@1996")).roles("ADMIN").build();
+        UserDetails hr = User.withUsername("Amit").password(passwordEncoder()
+                .encode("BlackBolt@1996")).roles("HR").build();
 
-        UserDetails userAdmin = User.withUsername("Prakhar").password(passwordEncoder()
-                .encode("Avengers@1993")).roles("USER","ADMIN").build();
+        UserDetails admin = User.withUsername("Prakhar").password(passwordEncoder()
+                .encode("Avengers@1993")).roles("MANAGER","HR").build();
 
-        return new InMemoryUserDetailsManager(user,userAdmin,admin);
+        return new InMemoryUserDetailsManager(employee,hr,admin);
     }
 
     @Bean
@@ -36,10 +36,17 @@ public class EMSUpdateSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return  http.authorizeRequests()
+        /*return  http.authorizeRequests()
                 .antMatchers("/nonSecure").permitAll()
                 .and().authorizeRequests()
                 .antMatchers("/welcome","/text").authenticated()
+                .and().httpBasic()
+                .and().build();*/
+
+        return  http.csrf().disable().authorizeRequests()
+                .antMatchers("/employees/welcome").permitAll()
+                .and().authorizeRequests()
+                .antMatchers("/employees/**").authenticated()
                 .and().httpBasic()
                 .and().build();
 
